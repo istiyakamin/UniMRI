@@ -44,9 +44,16 @@ Thumbs.db
 # MRI data (do not commit patient / raw data)
 *.dat
 *.h5
+*.hdf5
 *.mrd
+*.ismrmrd
+*.mat
+*.npy
+*.npz
 *.7
 *.nii
 *.nii.gz
+*.cfl
+*.cfl.hdr
 data/
 scratch/

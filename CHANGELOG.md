@@ -13,6 +13,10 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `LinearOperator` with `IdentityOperator` / `ScaledOperator` /
   `CompositeOperator` and an adjoint dot-test.
 - Contract test suite for the data model, operator algebra, and reader registry.
+- `unimri.testing`: analytic phantoms, trajectory generators (2D/3D radial,
+  stack-of-stars, Cartesian), a brute-force reference NDFT, and
+  `synthetic_dataset(pattern)` returning one valid `MRIData` per
+  `SamplingPattern` with known ground truth.
 
 ### Not yet implemented
 - All vendor readers (`ismrmrd`, `twix`, `hdf5`) — interfaces only.
