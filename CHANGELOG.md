@@ -17,6 +17,9 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   stack-of-stars, Cartesian), a brute-force reference NDFT, and
   `synthetic_dataset(pattern)` returning one valid `MRIData` per
   `SamplingPattern` with known ground truth.
+- `examples/` — six runnable examples (data model, synthetic datasets, operator
+  algebra, reference radial reconstruction, custom reader, multinuclear) plus
+  the aspirational end-to-end API; `test_examples.py` runs them in CI.
 
 ### Not yet implemented
 - All vendor readers (`ismrmrd`, `twix`, `hdf5`) — interfaces only.
