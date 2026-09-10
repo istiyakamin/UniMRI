@@ -88,12 +88,21 @@ GPU and vendor-specific support are optional extras: `pip install -e ".[gpu]"`,
 - [Roadmap](docs/roadmap.md)
 - [Prior art](docs/prior-art.md) — how UniMRI relates to `mrpro`, `mri-nufft`,
   `sigpy`, BART, ISMRMRD/Gadgetron, and others
+- [Acknowledgments](docs/acknowledgments.md) — every library, standard, and
+  method UniMRI uses, with credit
 
 ## Contributing
 
 UniMRI is meant to grow as a community project. See
 [CONTRIBUTING.md](CONTRIBUTING.md) and the
 [good first issues](https://github.com/istiyakamin/UniMRI/labels/good%20first%20issue).
+
+## Acknowledgments
+
+UniMRI builds on the open-source scientific Python ecosystem — NumPy, SciPy,
+h5py, and (as it grows) ISMRMRD, MRI-NUFFT, SigPy, BART, twixtools, PyTorch, and
+others, plus published reconstruction methods credited to their originators. The
+full list with licenses is in [docs/acknowledgments.md](docs/acknowledgments.md).
 
 ## License
 

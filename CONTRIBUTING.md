@@ -14,6 +14,8 @@ code.
   behind optional extras — the core (`numpy`, `scipy`, `h5py`) stays small.
 - Don't reimplement solved problems. Wrap `ismrmrd`, `twixtools`, `mri-nufft`,
   `sigpy`, BART, etc. behind UniMRI interfaces rather than porting their code.
+  When you add a dependency or implement a published method, credit it in
+  [`docs/acknowledgments.md`](docs/acknowledgments.md) in the same PR.
 
 ## Development setup
 

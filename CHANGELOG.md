@@ -20,6 +20,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `examples/` — six runnable examples (data model, synthetic datasets, operator
   algebra, reference radial reconstruction, custom reader, multinuclear) plus
   the aspirational end-to-end API; `test_examples.py` runs them in CI.
+- `docs/acknowledgments.md` — credit for every library, standard, and method
+  UniMRI uses or is built to use, with licenses.
 
 ### Not yet implemented
 - All vendor readers (`ismrmrd`, `twix`, `hdf5`) — interfaces only.

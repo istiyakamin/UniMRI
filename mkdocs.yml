@@ -29,6 +29,7 @@ nav:
   - I/O and formats: io-format-support.md
   - Roadmap: roadmap.md
   - Prior art: prior-art.md
+  - Acknowledgments: acknowledgments.md
 
 markdown_extensions:
   - admonition
