@@ -1,5 +1,6 @@
 site_name: UniMRI
 site_description: A unified Python framework for MRI raw-data processing and reconstruction
+site_url: https://istiyakamin.github.io/UniMRI/
 repo_url: https://github.com/istiyakamin/UniMRI
 repo_name: istiyakamin/UniMRI
 edit_uri: edit/main/docs/
@@ -30,6 +31,12 @@ nav:
   - Roadmap: roadmap.md
   - Prior art: prior-art.md
   - Acknowledgments: acknowledgments.md
+  - API reference:
+      - Overview: reference/index.md
+      - Data model: reference/data-model.md
+      - I/O: reference/io.md
+      - Operators: reference/operators.md
+      - Testing utilities: reference/testing.md
 
 markdown_extensions:
   - admonition

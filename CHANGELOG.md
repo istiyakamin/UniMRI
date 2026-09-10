@@ -22,6 +22,16 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   the aspirational end-to-end API; `test_examples.py` runs them in CI.
 - `docs/acknowledgments.md` — credit for every library, standard, and method
   UniMRI uses or is built to use, with licenses.
+- Project logo, architecture diagram, and README status badges.
+- API reference pages (`docs/reference/`, mkdocstrings) in the docs nav.
+- `SECURITY.md`, `RELEASING.md`, `.editorconfig`, `.github/dependabot.yml`,
+  `.github/ISSUE_TEMPLATE/config.yml`.
+- Version single-sourced from `src/unimri/__init__.py` via `hatch.version`;
+  a test keeps `CITATION.cff` in sync.
+- CI now runs on Linux/Windows/macOS, builds and `twine check`s the wheel, and
+  installs it in a clean env; a coverage floor of 80% is enforced.
+- Workflows: `docs.yml` deploys the MkDocs site to GitHub Pages; `release.yml`
+  publishes to PyPI via Trusted Publishing on a `v*` tag.
 
 ### Not yet implemented
 - All vendor readers (`ismrmrd`, `twix`, `hdf5`) — interfaces only.

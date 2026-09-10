@@ -31,6 +31,8 @@ from unimri.operators import (
     ScaledOperator,
 )
 
+# Single source of truth for the version. Hatchling reads this line
+# (`[tool.hatch.version]`), and CITATION.cff is kept in sync by a test.
 __version__ = "0.0.0"
 
 __all__ = [
