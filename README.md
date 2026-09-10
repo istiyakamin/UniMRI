@@ -1,6 +1,10 @@
-# UniMRI
+<p align="center">
+  <img src="assets/logo.png" alt="UniMRI — one interface for MRI raw data" width="380">
+</p>
 
-**One interface for MRI raw data.**
+<h1 align="center">UniMRI</h1>
+
+<p align="center"><strong>One interface for MRI raw data.</strong></p>
 
 UniMRI is an open-source Python framework that provides a common computational
 interface for MRI raw data across scanners, vendors, and acquisition strategies —
