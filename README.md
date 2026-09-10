@@ -22,30 +22,9 @@ The core problem is fragmentation: every vendor format has its own loader, and
 every reconstruction toolbox has its own data model. UniMRI normalizes vendor
 raw data into one representation, then reconstructs from that.
 
-```text
-        Siemens TWIX     GE P-file     Philips RAW     ISMRMRD     HDF5
-              │              │              │             │          │
-              └──────────────┴──────┬───────┴─────────────┴──────────┘
-                                    ▼
-                          ┌──────────────────┐
-                          │  UniMRI IO layer │      format detection + adapters
-                          └────────┬─────────┘
-                                   ▼
-                          ┌──────────────────┐
-                          │ Unified MRIData  │      k-space · trajectory ·
-                          │   data model     │      encoding · coils · metadata
-                          └────────┬─────────┘
-                                   ▼
-                          ┌──────────────────┐
-                          │  Operator layer  │      y = P F S x
-                          └────────┬─────────┘
-                                   ▼
-                          ┌──────────────────┐
-                          │  Reconstruction  │      FFT · SENSE · CG · CS · …
-                          └────────┬─────────┘
-                                   ▼
-                               MRI image
-```
+<p align="center">
+  <img src="assets/idea.png" alt="UniMRI pipeline: raw data from any vendor (Siemens TWIX, GE P-file, Philips RAW, ISMRMRD, HDF5) flows through the I/O layer (format detection + reader registry), into the unified MRIData model (k-space, trajectory, encoding, coils, metadata, provenance), through the operator layer (reconstruction as an inverse problem, y = P F S x), through reconstruction (FFT, SENSE, GRAPPA, CG-SENSE, compressed sensing), to an MRI image — vendor- and trajectory-independent." width="560">
+</p>
 
 ## Aspirational API
 
