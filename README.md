@@ -6,6 +6,23 @@
 
 <p align="center"><strong>One interface for MRI raw data.</strong></p>
 
+<p align="center">
+  <a href="https://github.com/istiyakamin/UniMRI/actions/workflows/ci.yml"><img src="https://github.com/istiyakamin/UniMRI/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <img src="https://img.shields.io/badge/status-pre--alpha-orange.svg" alt="Status: pre-alpha">
+  <img src="https://img.shields.io/badge/python-3.10%2B-blue.svg" alt="Python 3.10+">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a>
+  <a href="https://github.com/astral-sh/ruff"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" alt="Ruff"></a>
+  <img src="https://img.shields.io/badge/types-typed-brightgreen.svg" alt="Typed">
+</p>
+
+<!-- Enable after the first public release:
+  <a href="https://pypi.org/project/unimri/"><img src="https://img.shields.io/pypi/v/unimri.svg" alt="PyPI"></a>
+  <a href="https://pypi.org/project/unimri/"><img src="https://img.shields.io/pypi/dm/unimri.svg?label=PyPI%20downloads" alt="PyPI downloads"></a>
+  <a href="https://istiyakamin.github.io/UniMRI/"><img src="https://img.shields.io/badge/docs-mkdocs-blue.svg" alt="Docs"></a>
+  <a href="https://doi.org/PLACEHOLDER"><img src="https://img.shields.io/badge/DOI-PLACEHOLDER-blue.svg" alt="DOI"></a>
+  <a href="https://securityscorecards.dev/viewer/?uri=github.com/istiyakamin/UniMRI"><img src="https://api.securityscorecards.dev/projects/github.com/istiyakamin/UniMRI/badge" alt="OpenSSF Scorecard"></a>
+-->
+
 UniMRI is an open-source Python framework that provides a common computational
 interface for MRI raw data across scanners, vendors, and acquisition strategies —
 Cartesian, radial, spiral, and other non-Cartesian trajectories — so that
