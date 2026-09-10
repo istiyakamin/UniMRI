@@ -55,7 +55,7 @@ def radial_mri_data(rng: np.random.Generator) -> MRIData:
     radius = np.linspace(-n_ro / 2, n_ro / 2, n_ro, endpoint=False)
     kx = np.cos(angles)[:, None] * radius[None, :]
     ky = np.sin(angles)[:, None] * radius[None, :]
-    coords = np.stack([kx, ky], axis=0)  # (2, n_spokes, n_ro)
+    coords = np.stack([ky, kx], axis=0)  # (2, n_spokes, n_ro); row d -> image axis d
 
     return MRIData(
         kspace=kspace,

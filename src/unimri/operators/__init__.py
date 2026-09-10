@@ -14,6 +14,7 @@ from unimri.operators.base import (
     LinearOperator,
     ScaledOperator,
 )
+from unimri.operators.nufft import NUFFTOperator
 
 __all__ = [
     "LinearOperator",
@@ -21,4 +22,5 @@ __all__ = [
     "IdentityOperator",
     "ScaledOperator",
     "CompositeOperator",
+    "NUFFTOperator",
 ]

@@ -6,13 +6,16 @@ depends on contributors.
 ## Guiding principle: design against real data
 
 The interfaces in this scaffold (`MRIData`, `Reader`, `LinearOperator`) are a
-*starting point*, not a frozen contract. The single most important early task is
-**Milestone 1**: get one real ISMRMRD dataset to reconstruct end-to-end with a
-plain FFT. That exercise is expected to reshape the data model. Only after two
-or three real formats and two or three real reconstructions work should the
-interfaces be declared stable (the 1.0 line).
+*starting point*, not a frozen contract. Only after several real formats and
+several real reconstructions work should the interfaces be declared stable (the
+1.0 line).
 
-Do not build layers 3–6 broadly before layer 1–2 works on real data.
+The rule is: **build against real data, not ahead of it.** The `NUFFTOperator`
+and `reconstruct(method="adjoint")` were built early (out of milestone order)
+because real 3-D density-adapted radial ²³Na data was on hand to validate them
+against — and doing so already pinned down the trajectory axis convention. The
+`Trajectory` and `EncodingSpace` shapes may still shift as the vendor readers
+land.
 
 ## Milestone 0 — Scaffold ✅ (this commit)
 
@@ -24,11 +27,15 @@ Do not build layers 3–6 broadly before layer 1–2 works on real data.
 
 ## Milestone 1 — Core + first real read → `0.1.0`
 
+- ✅ `unimri.testing` — synthetic phantoms, trajectories, reference NDFT,
+  `synthetic_dataset(pattern)`.
+- ✅ `reconstruct(method="adjoint")` — centered inverse FFT (Cartesian) and
+  density-compensated NUFFT gridding (non-Cartesian), RSS coil combine.
 - `ISMRMRDReader.read` — real, wrapping the `ismrmrd` package.
 - `HDF5Reader` + `MRIData.to_hdf5()` round-trip (test fixtures, caching).
-- `FourierOperator` (centered n-D FFT, array-API backed).
-- `reconstruct(method="fft")` — inverse FFT + root-sum-of-squares coil combine.
-- Synthetic phantom fixtures; end-to-end test: ISMRMRD file → image.
+- `FourierOperator` as a proper `LinearOperator` (the current recon uses a bare
+  centered FFT inline).
+- End-to-end test: ISMRMRD file → image.
 - **Revisit the data model** based on what ISMRMRD actually carries.
 
 ## Milestone 2 — Siemens TWIX → `0.1.x`
@@ -53,11 +60,16 @@ Do not build layers 3–6 broadly before layer 1–2 works on real data.
 
 ## Milestone 5 — Non-Cartesian → `0.4.0`
 
-- `NUFFTOperator` adapter over `mri-nufft` (and/or `torchkbnufft`, `sigpy`).
-- Density compensation: analytic, Voronoi, Pipe–Menon iterative.
-- `reconstruct(method="adjoint")` — density-compensated gridding.
-- First target trajectory: **3D density-adapted radial** (the sodium / X-nuclei
-  workhorse). Then 2D radial, stack-of-stars, spiral.
+- ✅ `NUFFTOperator` — FINUFFT-backed, 2-D and 3-D, passes the adjoint dot-test
+  and matches the reference NDFT. Verified on real 3-D density-adapted radial
+  (DA-3DPR) ²³Na data (`examples/sodium_radial.py`).
+- ✅ `reconstruct(method="adjoint")` — density-compensated gridding.
+- Swap/extend the backend to `mri-nufft` (GPU, more kernels) behind the same
+  interface.
+- Density compensation: analytic and Pipe–Menon iterative (currently the DCF
+  must be supplied on the `Trajectory`).
+- Broader trajectory coverage: 2-D radial ✅, stack-of-stars ✅, 3-D radial ✅,
+  spiral, cones.
 - GIRF / gradient-delay correction hook.
 
 ## Milestone 6 — Iterative reconstruction → `0.5.0`

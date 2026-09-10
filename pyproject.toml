@@ -27,6 +27,8 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+nufft = ["finufft>=2.2"]
+viz = ["matplotlib>=3.7"]
 ismrmrd = ["ismrmrd>=1.14"]
 torch = ["torch>=2.1"]
 gpu = ["cupy-cuda12x>=13.0"]
@@ -36,6 +38,8 @@ dev = [
     "ruff>=0.6",
     "mypy>=1.11",
     "build>=1.2",
+    "finufft>=2.2",
+    "matplotlib>=3.7",
     "tomli>=2.0; python_version < '3.11'",
 ]
 docs = [

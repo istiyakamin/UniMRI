@@ -64,23 +64,31 @@ __all__ = [
 ]
 
 
-def reconstruct(data: MRIData, method: str = "fft", **kwargs: object) -> object:
+def reconstruct(data: MRIData, method: str = "adjoint", **kwargs: object):
     """Reconstruct an image from :class:`MRIData`.
 
-    This is the intended top-level entry point. No reconstruction methods are
-    implemented yet; this raises :class:`NotImplementedError` until the
-    ``unimri.reconstruction`` backends land (see ``docs/roadmap.md``).
+    The top-level entry point. Currently implemented:
+
+    - ``"adjoint"`` -- centered inverse FFT (Cartesian) or density-compensated
+      gridding via the adjoint NUFFT (non-Cartesian). Non-Cartesian needs the
+      ``nufft`` extra (``pip install "unimri[nufft]"``).
+
+    Planned: ``"sense"``, ``"grappa"``, ``"cg"``, ``"cs"`` -- see ``docs/roadmap.md``.
 
     Parameters
     ----------
     data:
         The raw data to reconstruct.
     method:
-        Reconstruction method name, e.g. ``"fft"``, ``"sense"``, ``"cg"``.
+        Reconstruction method name.
     **kwargs:
-        Method-specific options.
+        Method-specific options (e.g. ``coil_combine="rss"``).
+
+    Returns
+    -------
+    numpy.ndarray
+        The reconstructed image (``(z, y, x)`` for 3-D, ``(y, x)`` for 2-D).
     """
-    raise NotImplementedError(
-        f"reconstruct(method={method!r}) is not implemented yet. "
-        "UniMRI is pre-alpha; see https://github.com/istiyakamin/UniMRI/blob/main/docs/roadmap.md"
-    )
+    from unimri.reconstruction import run
+
+    return run(data, method, **kwargs)

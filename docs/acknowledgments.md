@@ -23,6 +23,8 @@ Enabled through extras (`pip install "unimri[...]"`):
 
 | Library | Extra | Used for | License |
 | --- | --- | --- | --- |
+| [FINUFFT](https://github.com/flatironinstitute/finufft) | `nufft` | the non-uniform FFT behind `NUFFTOperator` and non-Cartesian reconstruction | Apache-2.0 |
+| [Matplotlib](https://matplotlib.org) | `viz` | plotting in the examples | Matplotlib (BSD-style) |
 | [ISMRMRD (Python)](https://github.com/ismrmrd/ismrmrd-python) | `ismrmrd` | reading ISMRMRD raw data | permissive (see project) |
 | [PyTorch](https://pytorch.org) | `torch` | GPU / autograd array backend; unrolled-network reconstruction later | BSD-3-Clause |
 | [CuPy](https://cupy.dev) | `gpu` | CUDA array backend | MIT |
@@ -35,8 +37,8 @@ land (see the [roadmap](roadmap.md)); UniMRI does not reimplement them.
 | Library | Will be used for | License |
 | --- | --- | --- |
 | [twixtools](https://github.com/pehses/twixtools) (P. Ehses) | parsing Siemens TWIX `.dat` files | MIT |
-| [MRI-NUFFT](https://github.com/mind-inria/mri-nufft) | unified non-uniform FFT interface | BSD-3-Clause |
-| [finufft / cufinufft](https://github.com/flatironinstitute/finufft) | CPU/GPU NUFFT backend (via MRI-NUFFT) | Apache-2.0 |
+| [MRI-NUFFT](https://github.com/mind-inria/mri-nufft) | broader NUFFT backend (GPU, more kernels) behind the same `NUFFTOperator` interface | BSD-3-Clause |
+| [cufinufft](https://github.com/flatironinstitute/finufft) | GPU NUFFT backend | Apache-2.0 |
 | [gpuNUFFT](https://github.com/andyschwarzl/gpuNUFFT) | GPU gridding backend (via MRI-NUFFT) | MIT |
 | [torchkbnufft](https://github.com/mmuckley/torchkbnufft) (M. Muckley) | differentiable Kaiser–Bessel NUFFT (via MRI-NUFFT) | MIT |
 | [SigPy](https://github.com/mikgroup/sigpy) | reference parallel-imaging / compressed-sensing recon, ESPIRiT | BSD-3-Clause |

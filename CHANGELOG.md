@@ -32,6 +32,16 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   installs it in a clean env; a coverage floor of 80% is enforced.
 - Workflows: `docs.yml` deploys the MkDocs site to GitHub Pages; `release.yml`
   publishes to PyPI via Trusted Publishing on a `v*` tag.
+- `NUFFTOperator` — FINUFFT-backed non-uniform FFT (2-D and 3-D), passes the
+  adjoint dot-test and matches the reference NDFT. Optional `nufft` extra.
+- `unimri.reconstruct(data, method="adjoint")` — centered inverse FFT for
+  Cartesian data, density-compensated NUFFT gridding for non-Cartesian, with
+  RSS / sum / no coil combination.
+- `examples/sodium_radial.py` — end-to-end reconstruction of real 3-D
+  density-adapted radial ²³Na data; `04` now uses `unimri.reconstruct`.
+- Trajectory axis convention pinned: `coords` row `d` pairs with image axis `d`
+  (`(kz, ky, kx)` for 3-D). `unimri.testing` trajectories and the docs updated.
+- `viz` extra (matplotlib) for the plotting examples.
 
 ### Not yet implemented
 - All vendor readers (`ismrmrd`, `twix`, `hdf5`) — interfaces only.

@@ -55,6 +55,12 @@ Trajectory(coords, units=TrajectoryUnits.NORMALIZED, density_compensation=None)
 where `n_dims` is 2 or 3, matching `encoding.n_dims`. The trailing axes must
 multiply to the same count as `kspace`'s `shot * readout`.
 
+**Axis order.** Row `d` of `coords` corresponds to **image axis `d`** in NumPy
+order, i.e. `(ky, kx)` for a 2-D image `(ny, nx)` and `(kz, ky, kx)` for a 3-D
+image `(nz, ny, nx)` — the same slowest-to-fastest order as the Cartesian
+`kspace_axes` (`… kz, ky, kx`). `NUFFTOperator` and the reference `ndft` both
+assume this.
+
 **Units.** UniMRI's canonical unit is `NORMALIZED`: one unit of `coords` is one
 sample of the *encoded matrix*, and the fully-sampled Nyquist window is
 `[-N/2, N/2)` per axis. This matches BART and `mri-nufft`'s unitless mode.

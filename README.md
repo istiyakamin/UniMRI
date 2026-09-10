@@ -28,10 +28,12 @@ interface for MRI raw data across scanners, vendors, and acquisition strategies 
 Cartesian, radial, spiral, and other non-Cartesian trajectories — so that
 reconstruction algorithms can be written once and run on data from anywhere.
 
-> **Status: pre-alpha (v0.0.0).** This repository currently contains the design
-> specification, the public interfaces (`MRIData`, `Reader`, `LinearOperator`),
-> and the project scaffold. No reconstruction backends are implemented yet — see
-> the [roadmap](docs/roadmap.md).
+> **Status: pre-alpha (v0.0.0).** The data model (`MRIData`), the operator
+> algebra (`LinearOperator`), a FINUFFT-backed `NUFFTOperator`, and
+> `reconstruct(method="adjoint")` (Cartesian iFFT + non-Cartesian gridding) all
+> work — the non-Cartesian path is validated on real 3-D radial ²³Na data. The
+> vendor readers (`unimri.read`) are still stubs. See the
+> [roadmap](docs/roadmap.md).
 
 > **Name caveat:** `UniMRI` / `unimri` is a provisional working name. A full
 > PyPI / GitHub / trademark clearance is still pending before any public release

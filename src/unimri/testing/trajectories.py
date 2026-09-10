@@ -4,6 +4,10 @@ All generators return ``coords`` in :class:`~unimri.data.TrajectoryUnits.NORMALI
 units (one unit = one sample of the encoded matrix, Nyquist window
 ``[-N/2, N/2)``) and, where a closed form exists, an analytic density
 compensation function.
+
+Axis convention: ``coords`` row ``d`` corresponds to image axis ``d`` (NumPy
+order) -- ``(ky, kx)`` for a 2-D image ``(ny, nx)``, ``(kz, ky, kx)`` for a 3-D
+image ``(nz, ny, nx)``. See ``docs/data-model.md``.
 """
 
 from __future__ import annotations
@@ -27,7 +31,7 @@ def radial_2d(
         angles = np.linspace(0.0, np.pi, n_spokes, endpoint=False)
     kx = np.cos(angles)[:, None] * kr[None, :]
     ky = np.sin(angles)[:, None] * kr[None, :]
-    coords = np.stack([kx, ky], axis=0)
+    coords = np.stack([ky, kx], axis=0)  # row 0 -> image axis 0 (y)
     # ramp filter (|k|), normalised; the DC sample keeps a small finite weight.
     dcf = np.abs(kr)[None, :].repeat(n_spokes, axis=0)
     dcf = np.maximum(dcf, 0.5 / matrix)
@@ -49,8 +53,8 @@ def radial_3d(
     theta = np.arccos(np.clip(z, -1.0, 1.0))
     phi = 2.0 * np.pi * ((i * _PHI1) % 1.0)
     dirs = np.stack(
-        [np.sin(theta) * np.cos(phi), np.sin(theta) * np.sin(phi), np.cos(theta)], axis=0
-    )  # (3, n_spokes)
+        [np.cos(theta), np.sin(theta) * np.sin(phi), np.sin(theta) * np.cos(phi)], axis=0
+    )  # (3, n_spokes) as (kz, ky, kx) -> image axes (z, y, x)
     coords = dirs[:, :, None] * kr[None, None, :]  # (3, n_spokes, readout)
     # center-out radial: dcf ~ k^2 (surface area of the shell).
     dcf = (kr**2)[None, :].repeat(n_spokes, axis=0)
@@ -64,14 +68,13 @@ def stack_of_stars(matrix: int, n_spokes: int, n_partitions: int) -> tuple[np.nd
 
     Returns ``(coords (3, n_spokes*n_partitions, matrix), dcf (n_spokes*n_partitions, matrix))``.
     """
-    coords2d, dcf2d = radial_2d(matrix, n_spokes, golden_angle=True)
+    coords2d, dcf2d = radial_2d(matrix, n_spokes, golden_angle=True)  # (ky, kx) rows
     kz = np.linspace(-n_partitions / 2, n_partitions / 2, n_partitions, endpoint=False)
     shots = []
     for z in kz:
-        c = coords2d.copy()  # (2, n_spokes, matrix)
-        c3 = np.concatenate([c, np.full((1, n_spokes, matrix), z)], axis=0)
+        c3 = np.concatenate([np.full((1, n_spokes, matrix), z), coords2d], axis=0)  # (kz, ky, kx)
         shots.append(c3)
-    coords = np.concatenate(shots, axis=1)  # (3, n_spokes*nz, matrix)
+    coords = np.concatenate(shots, axis=1)  # (3, n_partitions*n_spokes, matrix)
     dcf = np.tile(dcf2d, (n_partitions, 1))
     return coords, dcf
 

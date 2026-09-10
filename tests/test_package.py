@@ -17,9 +17,13 @@ def test_public_api_surface() -> None:
         assert hasattr(unimri, name), f"unimri.__all__ lists {name!r} but it is missing"
 
 
-def test_reconstruct_is_declared_but_unimplemented(cartesian_mri_data) -> None:
-    with pytest.raises(NotImplementedError, match="pre-alpha"):
-        unimri.reconstruct(cartesian_mri_data, method="fft")
+def test_reconstruct_dispatches_and_rejects_unknown_methods(cartesian_mri_data) -> None:
+    from unimri.exceptions import UniMRIError
+
+    img = unimri.reconstruct(cartesian_mri_data, method="adjoint")
+    assert img.shape == (8, 16, 16)  # (nz, ny, nx)
+    with pytest.raises(UniMRIError, match="unknown reconstruction method"):
+        unimri.reconstruct(cartesian_mri_data, method="does-not-exist")
 
 
 def test_read_and_reconstruct_are_exported() -> None:
