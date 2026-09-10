@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+title: "UniMRI: A Unified Python Framework for MRI Raw Data Processing and Reconstruction"
+message: "If you use this software, please cite it using these metadata."
+type: software
+authors:
+  - given-names: Istiyak Amin
+    family-names: Santo
+    alias: istiyakamin
+repository-code: "https://github.com/istiyakamin/UniMRI"
+url: "https://github.com/istiyakamin/UniMRI"
+abstract: >-
+  UniMRI is an open-source Python framework that provides a common data model and
+  computational abstraction layer for MRI raw data acquired from different
+  scanners, vendors, and acquisition strategies (Cartesian and non-Cartesian),
+  enabling reconstruction algorithms to operate independently of the original
+  vendor format.
+keywords:
+  - MRI
+  - image reconstruction
+  - k-space
+  - ISMRMRD
+  - non-Cartesian
+  - NUFFT
+license: MIT
+version: 0.0.0
+date-released: "2026-09-10"
