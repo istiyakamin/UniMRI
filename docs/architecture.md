@@ -79,13 +79,17 @@ A = SamplingOperator(...) @ FourierOperator(...) @ SensitivityOperator(...)
 
 so a whole encoding model is one expression, and a solver only needs
 `forward` / `adjoint` / `normal`. It is oblivious to whether $F$ was an FFT or a
-NUFFT — which is exactly how the same CG-SENSE code reconstructs Cartesian and
-radial data.
+NUFFT — which is exactly how `unimri.reconstruct(data, method="cg")` runs the
+same CG-SENSE code on Cartesian and radial data (`docs/reference/operators.md`,
+`docs/reference/optimization.md`).
 
-The algebraic core (`LinearOperator`, `IdentityOperator`, `ScaledOperator`,
-`CompositeOperator`, the adjoint wrapper, and an adjoint **dot-test**) is
-implemented today. Physical operators are stubs — see the
-[roadmap](roadmap.md).
+Implemented today: the algebraic core (`LinearOperator`, `IdentityOperator`,
+`ScaledOperator`, `CompositeOperator`, `AdjointOperator`, `UncheckedOperator`,
+and an adjoint **dot-test**), `FourierOperator` (Cartesian), `NUFFTOperator`
+(non-Cartesian, FINUFFT-backed), and `SensitivityOperator` (coils) — composable
+via `@` into a full `y = F S x` encoding, as used by `reconstruct(method="cg")`.
+`SamplingOperator` (explicit Cartesian undersampling masks) is still planned —
+see the [roadmap](roadmap.md).
 
 ### The dot-test
 
@@ -96,10 +100,11 @@ required part of the operator contract, enforced in the test suite.
 
 ## Layer 5 — Reconstruction
 
-Named methods (`"fft"`, `"sense"`, `"cg"`, `"cs"`, …) dispatched from
-`unimri.reconstruct(data, method=...)`. Each is a thin function that assembles
-operators (layer 4) from calibration outputs (layer 3) and, if iterative, hands
-them to a solver.
+Named methods dispatched from `unimri.reconstruct(data, method=...)`. Each is a
+thin function that assembles operators (layer 4) from calibration outputs
+(layer 3) and, if iterative, hands them to a solver from `unimri.optimization`
+(layer 6). Implemented: `"adjoint"` (single-pass gridding / iFFT) and `"cg"`
+(CG-SENSE). Planned: `"sense"` (direct), `"grappa"`, `"cs"` (compressed sensing).
 
 ## Layer 6 — Pipeline
 

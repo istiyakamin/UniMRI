@@ -1,12 +1,16 @@
-"""Optimization primitives (planned).
+"""Optimization primitives.
 
-Backend-agnostic solvers that operate purely through :class:`LinearOperator`:
-conjugate gradient (for ``AᴴA x = Aᴴ y``), FISTA / proximal-gradient, ADMM, and
+Backend-agnostic solvers that operate purely through
+:class:`~unimri.operators.base.LinearOperator`:
+
+- ``conjugate_gradient`` -- Hermitian PSD normal-equation solver (CG-SENSE core). Implemented.
+
+Planned (see ``docs/roadmap.md``): FISTA / proximal-gradient, ADMM, and
 regularizers (L1, total variation, wavelet, locally-low-rank).
-
-See ``docs/roadmap.md`` Milestone 6.
 """
 
 from __future__ import annotations
 
-__all__: list[str] = []
+from unimri.optimization.cg import conjugate_gradient
+
+__all__ = ["conjugate_gradient"]

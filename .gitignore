@@ -57,3 +57,8 @@ Thumbs.db
 *.cfl.hdr
 data/
 scratch/
+
+# Output images/arrays written by running the examples from the repo root
+# (tracked images belong in assets/, not the root)
+/*.png
+/*.npy

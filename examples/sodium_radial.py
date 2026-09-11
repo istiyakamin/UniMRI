@@ -99,6 +99,14 @@ def main() -> None:
         default=0,
         help="subsample projections for a quick preview (0 = use all)",
     )
+    ap.add_argument(
+        "--method",
+        choices=["adjoint", "cg"],
+        default="adjoint",
+        help="'adjoint' = single-pass gridding (fast); 'cg' = CG-SENSE (slower, sharper)",
+    )
+    ap.add_argument("--n-iter", type=int, default=8, help="CG iterations (--method cg)")
+    ap.add_argument("--l2", type=float, default=1e-2, help="CG L2 regularization (--method cg)")
     args = ap.parse_args()
 
     if not args.kspace.exists() or not args.traj.exists():
@@ -116,15 +124,20 @@ def main() -> None:
     print(data.summary())
     print(f"\nexpected Larmor at 7 T: {data.acquisition.expected_larmor_hz / 1e6:.2f} MHz")
 
-    print("\nreconstructing (density-compensated NUFFT gridding)...")
-    img = unimri.reconstruct(data, method="adjoint")  # (nz, ny, nx)
+    if args.method == "adjoint":
+        print("\nreconstructing (density-compensated NUFFT gridding)...")
+        img = unimri.reconstruct(data, method="adjoint")  # (nz, ny, nx)
+    else:
+        print(f"\nreconstructing (CG-SENSE, {args.n_iter} iterations)...")
+        img = unimri.reconstruct(data, method="cg", n_iter=args.n_iter, l2=args.l2)
     print(f"image: {img.shape}  dtype {img.dtype}")
 
+    stem = f"sodium_da3dpr_{args.method}"
     try:
         import matplotlib.pyplot as plt
     except ImportError:
-        np.save("sodium_da3dpr.npy", img)
-        print("saved sodium_da3dpr.npy")
+        np.save(f"{stem}.npy", img)
+        print(f"saved {stem}.npy")
         return
     nz = img.shape[0]
     fig, ax = plt.subplots(1, 3, figsize=(9, 3))
@@ -132,10 +145,10 @@ def main() -> None:
         a.imshow(np.abs(img[z]), cmap="gray")
         a.set_title(f"z = {z}")
         a.axis("off")
-    fig.suptitle("23Na DA-3DPR, gridding reconstruction")
+    fig.suptitle(f"23Na DA-3DPR, {args.method} reconstruction")
     fig.tight_layout()
-    fig.savefig("sodium_da3dpr.png", dpi=120)
-    print("saved sodium_da3dpr.png")
+    fig.savefig(f"{stem}.png", dpi=120)
+    print(f"saved {stem}.png")
 
 
 if __name__ == "__main__":

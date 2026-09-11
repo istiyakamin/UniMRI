@@ -70,10 +70,13 @@ def reconstruct(data: MRIData, method: str = "adjoint", **kwargs: object):
     The top-level entry point. Currently implemented:
 
     - ``"adjoint"`` -- centered inverse FFT (Cartesian) or density-compensated
-      gridding via the adjoint NUFFT (non-Cartesian). Non-Cartesian needs the
-      ``nufft`` extra (``pip install "unimri[nufft]"``).
+      gridding via the adjoint NUFFT (non-Cartesian).
+    - ``"cg"`` -- CG-SENSE: iterative reconstruction with coil sensitivities,
+      the same solver for Cartesian and non-Cartesian data.
 
-    Planned: ``"sense"``, ``"grappa"``, ``"cg"``, ``"cs"`` -- see ``docs/roadmap.md``.
+    Both non-Cartesian paths need the ``nufft`` extra
+    (``pip install "unimri[nufft]"``). Planned: ``"sense"``, ``"grappa"``,
+    ``"cs"`` -- see ``docs/roadmap.md``.
 
     Parameters
     ----------
@@ -82,7 +85,8 @@ def reconstruct(data: MRIData, method: str = "adjoint", **kwargs: object):
     method:
         Reconstruction method name.
     **kwargs:
-        Method-specific options (e.g. ``coil_combine="rss"``).
+        Method-specific options (e.g. ``coil_combine="rss"`` for ``"adjoint"``;
+        ``n_iter``, ``l2``, ``sensitivity`` for ``"cg"``).
 
     Returns
     -------

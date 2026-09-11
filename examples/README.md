@@ -16,8 +16,9 @@ python examples/01_data_model.py
 | `04_reference_reconstruction.py` | Reconstruct a synthetic radial dataset with `unimri.reconstruct(method="adjoint")` (FINUFFT gridding) and with the exact reference NDFT; score both against ground truth |
 | `05_custom_reader.py` | Write and register your own `Reader` so `unimri.read()` handles a new format |
 | `06_multinuclear.py` | The gyromagnetic table; `AcquisitionInfo` for ²³Na vs ¹H |
+| `07_cg_sense.py` | CG-SENSE (`unimri.reconstruct(method="cg")`) via `FourierOperator`/`NUFFTOperator` composed with `SensitivityOperator`; same solver for Cartesian and non-Cartesian, beats single-pass gridding on undersampled radial |
 
-`test_examples.py` in the test suite executes `01`–`06` in CI, so they stay working.
+`test_examples.py` in the test suite executes `01`–`07` in CI, so they stay working.
 
 ## Needs local data
 

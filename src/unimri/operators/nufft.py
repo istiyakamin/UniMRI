@@ -107,14 +107,43 @@ class NUFFTOperator(LinearOperator):
         self.out_shape = (self._n_samples,)
 
     # -- LinearOperator -------------------------------------------------
+    #
+    # Both methods also accept an extra leading batch axis (e.g. coils), so
+    # that e.g. NUFFTOperator(...) @ SensitivityOperator(maps) works as a full
+    # multi-coil encoding operator. finufft's simple interface transforms one
+    # array at a time, so the batch is looped in Python.
 
     def _forward(self, x: Array) -> Array:
-        img = np.ascontiguousarray(np.asarray(x, dtype=np.complex128))
+        x = np.asarray(x, dtype=np.complex128)
         fn = finufft.nufft2d2 if self._ndim == 2 else finufft.nufft3d2
-        return fn(*self._coords, img, isign=-1, eps=self._eps)
+        if x.ndim == self._ndim:
+            return fn(*self._coords, np.ascontiguousarray(x), isign=-1, eps=self._eps)
+        if x.ndim == self._ndim + 1:
+            return np.stack(
+                [
+                    fn(*self._coords, np.ascontiguousarray(x[i]), isign=-1, eps=self._eps)
+                    for i in range(x.shape[0])
+                ]
+            )
+        raise ValueError(f"expected a {self._ndim}-D image (or batch thereof), got shape {x.shape}")
 
     def _adjoint(self, y: Array) -> Array:
-        c = np.ascontiguousarray(np.asarray(y, dtype=np.complex128).ravel())
-        if self._ndim == 2:
-            return finufft.nufft2d1(*self._coords, c, self._image_shape, isign=1, eps=self._eps)
-        return finufft.nufft3d1(*self._coords, c, self._image_shape, isign=1, eps=self._eps)
+        y = np.asarray(y, dtype=np.complex128)
+        fn = finufft.nufft2d1 if self._ndim == 2 else finufft.nufft3d1
+        if y.ndim == 1:
+            c = np.ascontiguousarray(y)
+            return fn(*self._coords, c, self._image_shape, isign=1, eps=self._eps)
+        if y.ndim == 2:
+            return np.stack(
+                [
+                    fn(
+                        *self._coords,
+                        np.ascontiguousarray(y[i]),
+                        self._image_shape,
+                        isign=1,
+                        eps=self._eps,
+                    )
+                    for i in range(y.shape[0])
+                ]
+            )
+        raise ValueError(f"expected a 1-D sample vector (or batch thereof), got shape {y.shape}")

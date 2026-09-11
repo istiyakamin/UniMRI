@@ -229,3 +229,38 @@ class CompositeOperator(LinearOperator):
         for op in self.operators:
             y = op._adjoint(y)
         return y
+
+
+class UncheckedOperator(LinearOperator):
+    """Wrap ``base``, skipping the public input/output shape validation.
+
+    Some operators (e.g. :class:`~unimri.operators.fourier.FourierOperator` and
+    :class:`~unimri.operators.nufft.NUFFTOperator`) declare the shape for a
+    *single* image but their ``_forward``/``_adjoint`` also accept a batched
+    input with a leading axis (e.g. coils) -- that is how
+    ``FourierOperator(...) @ SensitivityOperator(maps)`` becomes a full SENSE
+    encoding operator. The public :meth:`forward`/:meth:`adjoint`/:meth:`normal`
+    would reject the batched shape; this wrapper calls the unchecked internals
+    directly, for use once you know the batching is intentional (e.g. inside a
+    solver such as :func:`unimri.optimization.conjugate_gradient`).
+    """
+
+    def __init__(self, base: LinearOperator) -> None:
+        self._base = base
+        self.in_shape = None
+        self.out_shape = None
+        self.name = f"unchecked({base.name or type(base).__name__})"
+
+    def _forward(self, x: Array) -> Array:
+        return self._base._forward(x)
+
+    def _adjoint(self, y: Array) -> Array:
+        return self._base._adjoint(y)
+
+    def _normal(self, x: Array) -> Array:
+        return self._base._normal(x)
+
+
+def unchecked(op: LinearOperator) -> UncheckedOperator:
+    """Shorthand for :class:`UncheckedOperator`."""
+    return UncheckedOperator(op)

@@ -10,10 +10,14 @@ The interfaces in this scaffold (`MRIData`, `Reader`, `LinearOperator`) are a
 several real reconstructions work should the interfaces be declared stable (the
 1.0 line).
 
-The rule is: **build against real data, not ahead of it.** The `NUFFTOperator`
-and `reconstruct(method="adjoint")` were built early (out of milestone order)
-because real 3-D density-adapted radial ²³Na data was on hand to validate them
-against — and doing so already pinned down the trajectory axis convention. The
+The rule is: **build against real data, not ahead of it.** The `NUFFTOperator`,
+`FourierOperator`, `SensitivityOperator`, `reconstruct(method="adjoint"|"cg")`,
+and `conjugate_gradient` were built early (out of milestone order) because real
+3-D density-adapted radial ²³Na data was on hand to validate them against — and
+doing so already caught two real bugs: an inconsistent trajectory axis
+convention, and `FourierOperator` using a different amplitude normalization
+than `NUFFTOperator`/the reference NDFT (both fixed; see `docs/data-model.md`
+and `unimri.operators.fourier`). The
 `Trajectory` and `EncodingSpace` shapes may still shift as the vendor readers
 land.
 
@@ -53,10 +57,14 @@ land.
 
 ## Milestone 4 — Parallel imaging → `0.3.0`
 
-- `SensitivityOperator`, `CoilCompressionOperator`.
+- ✅ `SensitivityOperator` — composable coil operator (`Fᴴ` maps, `Fᴴ` combine),
+  exact `_normal`.
+- ✅ `estimate_sensitivity(method="rss")` — RSS-normalized baseline (crude but
+  dependency-free).
+- `CoilCompressionOperator`.
 - Calibration: ESPIRiT and adaptive/Walsh combine (wrapping `sigpy.mri` / BART
-  where available).
-- `reconstruct(method="sense")`, `method="grappa")`.
+  where available) -- the `"rss"` baseline is not a substitute for these.
+- `reconstruct(method="sense")` (direct, non-iterative), `method="grappa")`.
 
 ## Milestone 5 — Non-Cartesian → `0.4.0`
 
@@ -74,10 +82,19 @@ land.
 
 ## Milestone 6 — Iterative reconstruction → `0.5.0`
 
-- `unimri.optimization`: conjugate gradient, FISTA / proximal gradient, ADMM.
-- Regularizers: L1, total variation, wavelet, locally-low-rank.
-- `reconstruct(method="cg")` and `method="cs")` — trajectory-agnostic, so they
-  work on Cartesian and non-Cartesian data unchanged.
+- ✅ `unimri.optimization.conjugate_gradient` — solves `(AᴴA + l2·I)x = Aᴴy`
+  against any `LinearOperator`; L2 (Tikhonov) regularization built in.
+- ✅ `reconstruct(method="cg")` — CG-SENSE (`A = F @ SensitivityOperator(maps)`).
+  The **same code** reconstructs Cartesian and non-Cartesian data (only `F`
+  changes), and it measurably beats `"adjoint"` on undersampled/noisy radial
+  data (synthetic and real ²³Na, see `examples/07_cg_sense.py`).
+- FISTA / proximal gradient, ADMM.
+- Regularizers beyond L2: L1, total variation, wavelet, locally-low-rank.
+- `reconstruct(method="cs")` (compressed sensing).
+- Better coil sensitivities (ESPIRiT, Milestone 4) and a DCF-based
+  preconditioner should improve `"cg"` convergence and quality further; the
+  current `"rss"` sensitivity + unpreconditioned CG is a correct but basic
+  starting point.
 
 ## Milestone 7 — Multi-vendor → `0.6.0`
 

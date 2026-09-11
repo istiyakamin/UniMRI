@@ -42,6 +42,20 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Trajectory axis convention pinned: `coords` row `d` pairs with image axis `d`
   (`(kz, ky, kx)` for 3-D). `unimri.testing` trajectories and the docs updated.
 - `viz` extra (matplotlib) for the plotting examples.
+- `FourierOperator` (Cartesian, unnormalized/exact-adjoint convention matching
+  `NUFFTOperator` and the reference NDFT) and `SensitivityOperator` (coils),
+  both composable via `@`; `UncheckedOperator`/`unchecked()` for batched
+  (multi-coil) use through operators declared for a single instance.
+- `unimri.calibration.estimate_sensitivity(method="rss")` — RSS-normalized
+  coil sensitivity baseline.
+- `unimri.optimization.conjugate_gradient` — CG for `(AᴴA + l2·I)x = Aᴴy`.
+- `unimri.reconstruct(data, method="cg")` — CG-SENSE, trajectory-agnostic;
+  beats `"adjoint"` on undersampled/noisy radial data.
+- `examples/07_cg_sense.py`; `99_aspirational_api.py` trimmed to just the
+  still-missing reader half.
+- Fixed: `FourierOperator` previously used a unitary ("ortho") FFT convention
+  inconsistent with `NUFFTOperator`/`ndft`'s unnormalized convention -- caught
+  while wiring `reconstruct(method="cg")` to swap between them transparently.
 
 ### Not yet implemented
 - All vendor readers (`ismrmrd`, `twix`, `hdf5`) — interfaces only.

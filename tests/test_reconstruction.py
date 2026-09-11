@@ -8,6 +8,7 @@ import pytest
 import unimri
 from unimri.data import SamplingPattern, Trajectory, TrajectoryUnits
 from unimri.exceptions import UniMRIError
+from unimri.operators import FourierOperator, SensitivityOperator
 from unimri.testing import ndft_forward, synthetic_dataset
 from unimri.testing import trajectories as T
 
@@ -97,3 +98,76 @@ def test_reconstruct_rejects_non_singleton_extra_axis(cartesian_mri_data) -> Non
     )
     with pytest.raises(UniMRIError, match="non-singleton"):
         unimri.reconstruct(bad, method="adjoint")
+
+
+# -- FourierOperator ---------------------------------------------------------
+
+
+def test_fourier_operator_matches_reference_ndft_exactly() -> None:
+    rng = np.random.default_rng(0)
+    n = 10
+    img = rng.standard_normal((n, n)) + 1j * rng.standard_normal((n, n))
+    got = FourierOperator((n, n)).forward(img)
+    ref = ndft_forward(img, T.cartesian(n, n_dims=2)).reshape(n, n)
+    assert np.abs(got - ref).max() < 1e-9
+
+
+def test_fourier_operator_dot_test_and_exact_normal() -> None:
+    op = FourierOperator((12, 8))
+    assert op.dot_test()
+    rng = np.random.default_rng(1)
+    x = rng.standard_normal((12, 8)) + 1j * rng.standard_normal((12, 8))
+    assert np.allclose(op.normal(x), 12 * 8 * x)
+
+
+def test_fourier_operator_batches_over_leading_axis() -> None:
+    op = FourierOperator((10, 10))
+    rng = np.random.default_rng(2)
+    x = rng.standard_normal((4, 10, 10)) + 1j * rng.standard_normal((4, 10, 10))
+    batched = op._forward(x)
+    stacked = np.stack([op.forward(x[c]) for c in range(4)])
+    assert np.allclose(batched, stacked)
+
+
+# -- SensitivityOperator ------------------------------------------------------
+
+
+def test_sensitivity_operator_dot_test_and_exact_normal() -> None:
+    rng = np.random.default_rng(3)
+    sens = rng.standard_normal((5, 6, 6)) + 1j * rng.standard_normal((5, 6, 6))
+    op = SensitivityOperator(sens)
+    assert op.dot_test(in_shape=(6, 6), out_shape=(5, 6, 6))
+    x = rng.standard_normal((6, 6)) + 1j * rng.standard_normal((6, 6))
+    assert np.allclose(op.normal(x), (np.abs(sens) ** 2).sum(0) * x)
+
+
+# -- CG-SENSE ------------------------------------------------------------
+
+
+def test_reconstruct_cg_beats_adjoint_on_undersampled_radial() -> None:
+    ds = synthetic_dataset(SamplingPattern.RADIAL, matrix=28, n_coils=4, noise_std=0.02, seed=8)
+    img_adjoint = unimri.reconstruct(ds.data, method="adjoint")
+    img_cg = unimri.reconstruct(ds.data, method="cg", n_iter=15, l2=1e-3)
+    assert img_cg.shape == img_adjoint.shape
+    assert nrmse(img_cg, ds.ground_truth) < nrmse(img_adjoint, ds.ground_truth)
+
+
+def test_reconstruct_cg_cartesian_matches_adjoint_closely() -> None:
+    ds = synthetic_dataset(SamplingPattern.CARTESIAN, matrix=24, n_coils=4, seed=7)
+    img_cg = unimri.reconstruct(ds.data, method="cg", n_iter=15, l2=1e-6)
+    assert nrmse(img_cg, ds.ground_truth) < 0.05
+
+
+def test_reconstruct_cg_accepts_precomputed_sensitivity() -> None:
+    ds = synthetic_dataset(SamplingPattern.CARTESIAN, matrix=20, n_coils=3, seed=9)
+    assert ds.coil_maps is not None
+    img = unimri.reconstruct(ds.data, method="cg", n_iter=10, sensitivity=ds.coil_maps)
+    assert img.shape == ds.ground_truth.shape
+    assert nrmse(img, ds.ground_truth) < 0.05
+
+
+def test_reconstruct_cg_records_provenance() -> None:
+    ds = synthetic_dataset(SamplingPattern.CARTESIAN, matrix=16, n_coils=2, seed=10)
+    unimri.reconstruct(ds.data, method="cg", n_iter=5)
+    steps = [s for s in ds.data.provenance if s.operation == "reconstruct"]
+    assert steps and steps[-1].params["method"] == "cg"

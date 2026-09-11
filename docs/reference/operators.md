@@ -11,3 +11,11 @@ See [Architecture → Operators](../architecture.md#layer-4-operators) for the m
 ::: unimri.operators.CompositeOperator
 
 ::: unimri.operators.AdjointOperator
+
+::: unimri.operators.UncheckedOperator
+
+::: unimri.operators.FourierOperator
+
+::: unimri.operators.NUFFTOperator
+
+::: unimri.operators.SensitivityOperator

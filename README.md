@@ -29,11 +29,11 @@ Cartesian, radial, spiral, and other non-Cartesian trajectories — so that
 reconstruction algorithms can be written once and run on data from anywhere.
 
 > **Status: pre-alpha (v0.0.0).** The data model (`MRIData`), the operator
-> algebra (`LinearOperator`), a FINUFFT-backed `NUFFTOperator`, and
-> `reconstruct(method="adjoint")` (Cartesian iFFT + non-Cartesian gridding) all
-> work — the non-Cartesian path is validated on real 3-D radial ²³Na data. The
-> vendor readers (`unimri.read`) are still stubs. See the
-> [roadmap](docs/roadmap.md).
+> algebra, `FourierOperator`/`NUFFTOperator`/`SensitivityOperator`, and
+> `reconstruct(method="adjoint"|"cg")` — single-pass gridding and CG-SENSE, the
+> same code for Cartesian and non-Cartesian data — all work, validated on real
+> 3-D radial ²³Na data. The vendor readers (`unimri.read`) are still stubs. See
+> the [roadmap](docs/roadmap.md).
 
 > **Name caveat:** `UniMRI` / `unimri` is a provisional working name. A full
 > PyPI / GitHub / trademark clearance is still pending before any public release
@@ -54,20 +54,28 @@ raw data into one representation, then reconstructs from that.
 ```python
 import unimri
 
-raw = unimri.read("measurement.dat")  # vendor-agnostic
-image = unimri.reconstruct(raw, method="fft")  # trajectory-agnostic
+raw = unimri.read("measurement.dat")  # vendor-agnostic -- NOT YET (docs/roadmap.md, M2)
+image = unimri.reconstruct(raw, method="cg")  # trajectory-agnostic -- WORKS TODAY
 ```
 
 ```python
-# advanced: reconstruction as an inverse problem
-from unimri.operators import FourierOperator, SensitivityOperator, SamplingOperator
+# advanced: reconstruction as an inverse problem -- WORKS TODAY (see examples/07_cg_sense.py)
+from unimri.calibration import estimate_sensitivity
+from unimri.operators import FourierOperator, NUFFTOperator, SensitivityOperator, unchecked
 from unimri.optimization import conjugate_gradient
 
-A = SamplingOperator(raw.encoding) @ FourierOperator(raw.trajectory) @ SensitivityOperator(maps)
+maps = estimate_sensitivity(raw)
+F = (
+    NUFFTOperator(raw.trajectory, image_shape)
+    if not raw.is_cartesian
+    else FourierOperator(image_shape)
+)
+A = unchecked(F @ SensitivityOperator(maps))
 image = conjugate_gradient(A, raw.kspace, n_iter=30)
 ```
 
-These examples describe the target interface. They do **not** work yet.
+The reconstruction half works today (see `examples/`); `unimri.read` for vendor
+formats does not yet.
 
 ## Installation (development)
 

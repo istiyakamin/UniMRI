@@ -6,7 +6,10 @@ either an internal detail or a not-yet-implemented stub (see the
 
 - [Data model](data-model.md) — `MRIData` and its components
 - [I/O](io.md) — the reader interface and registry
-- [Operators](operators.md) — the linear-operator algebra
+- [Operators](operators.md) — the linear-operator algebra, `FourierOperator`, `NUFFTOperator`, `SensitivityOperator`
+- [Calibration](calibration.md) — coil sensitivity estimation
+- [Optimization](optimization.md) — the conjugate-gradient solver
+- [Reconstruction](reconstruction.md) — `adjoint` and `cg` (CG-SENSE)
 - [Testing utilities](testing.md) — synthetic data and reference transforms
 
 ::: unimri

@@ -43,6 +43,12 @@ def run(data: MRIData, method: str, **kwargs: object) -> Array:
 # ---------------------------------------------------------------------------
 
 
+def image_shape_of(data: MRIData) -> tuple[int, ...]:
+    """The reconstructed-image array shape: ``(ny, nx)`` or ``(nz, ny, nx)``."""
+    nx, ny, nz = data.encoding.recon_matrix
+    return (ny, nx) if data.encoding.n_dims == 2 else (nz, ny, nx)
+
+
 def _combine(coil_images: np.ndarray, mode: str) -> np.ndarray:
     """coil_images: (n_coils, *image_shape) -> (*image_shape), or unchanged for "none"."""
     if mode == "rss":
@@ -52,13 +58,6 @@ def _combine(coil_images: np.ndarray, mode: str) -> np.ndarray:
     if mode == "none":
         return coil_images
     raise UniMRIError(f"unknown coil_combine mode {mode!r}")
-
-
-def _ifftn_centered(kspace: np.ndarray, axes: tuple[int, ...]) -> np.ndarray:
-    return np.fft.fftshift(
-        np.fft.ifftn(np.fft.ifftshift(kspace, axes=axes), axes=axes, norm="ortho"),
-        axes=axes,
-    )
 
 
 def _as_coil_first(data: MRIData, wanted: tuple[str, ...]) -> np.ndarray:
@@ -73,44 +72,99 @@ def _as_coil_first(data: MRIData, wanted: tuple[str, ...]) -> np.ndarray:
     return arr.reshape(arr.shape[:n_named])
 
 
+def coil_images(data: MRIData, *, eps: float = 1e-6) -> np.ndarray:
+    """Per-coil, single-pass images: ``Aᴴ(w·y)`` per coil (no combination).
+
+    Cartesian: centered inverse FFT. Non-Cartesian: density-compensated
+    gridding via the adjoint NUFFT. Building block for :func:`adjoint` and for
+    :func:`unimri.calibration.estimate_sensitivity`.
+    """
+    image_shape = image_shape_of(data)
+
+    if data.is_cartesian:
+        from unimri.operators import FourierOperator
+
+        spatial = tuple(a for a in ("kz", "ky", "kx") if a in data.kspace_axes)
+        ks = _as_coil_first(data, spatial)  # (coil, [kz], ky, kx)
+        return FourierOperator(image_shape)._adjoint(ks)
+
+    from unimri.operators import NUFFTOperator
+
+    traj = data.trajectory
+    assert traj is not None  # guaranteed by validate() for non-Cartesian data
+    ks = _as_coil_first(data, ("shot", "readout"))  # (coil, shot, readout)
+    op = NUFFTOperator(traj, image_shape, eps=eps)
+    dcf = traj.density_compensation
+    w = None if dcf is None else np.asarray(dcf, dtype=np.float64).ravel()
+
+    y = ks.reshape(ks.shape[0], -1).astype(np.complex128)
+    if w is not None:
+        y = y * w
+    return op._adjoint(y)
+
+
 @register_method("adjoint")
 def adjoint(data: MRIData, *, coil_combine: str = "rss", eps: float = 1e-6) -> Array:
-    """Single-pass reconstruction.
-
-    Cartesian: centered inverse FFT over the k-space axes.
-    Non-Cartesian: density-compensated gridding via the adjoint NUFFT
-    (``Aᴴ (w · y)`` per coil).
+    """Single-pass reconstruction: gridding (non-Cartesian) or plain iFFT (Cartesian).
 
     Coils are combined by ``coil_combine`` ("rss", "sum", or "none"). Returns an
     array of shape ``recon_matrix`` in ``(z, y, x)`` order for 3-D / ``(y, x)`` for
     2-D — with a leading coil axis when ``coil_combine="none"``.
     """
-    nx, ny, nz = data.encoding.recon_matrix
-    image_shape: tuple[int, ...] = (ny, nx) if data.encoding.n_dims == 2 else (nz, ny, nx)
-
-    if data.is_cartesian:
-        spatial = tuple(a for a in ("kz", "ky", "kx") if a in data.kspace_axes)
-        ks = _as_coil_first(data, spatial)  # (coil, [kz], ky, kx)
-        coil_images = _ifftn_centered(ks, axes=tuple(range(1, ks.ndim)))
-    else:
-        from unimri.operators.nufft import NUFFTOperator
-
-        traj = data.trajectory
-        assert traj is not None  # guaranteed by validate() for non-Cartesian data
-        ks = _as_coil_first(data, ("shot", "readout"))  # (coil, shot, readout)
-        op = NUFFTOperator(traj, image_shape, eps=eps)
-        dcf = traj.density_compensation
-        w = None if dcf is None else np.asarray(dcf, dtype=np.float64).ravel()
-
-        coil_images = np.empty((ks.shape[0], *image_shape), dtype=np.complex128)
-        for c in range(ks.shape[0]):
-            y = np.ascontiguousarray(ks[c]).ravel().astype(np.complex128)
-            coil_images[c] = op.adjoint(y * w if w is not None else y)
-
-    result = _combine(coil_images, coil_combine)
+    result = _combine(coil_images(data, eps=eps), coil_combine)
     data.provenance.record(
-        "reconstruct",
-        params={"method": "adjoint", "coil_combine": coil_combine},
-        backend="numpy",
+        "reconstruct", params={"method": "adjoint", "coil_combine": coil_combine}, backend="numpy"
     )
     return result
+
+
+@register_method("cg")
+def cg(
+    data: MRIData,
+    *,
+    n_iter: int = 10,
+    l2: float = 1e-4,
+    sensitivity: np.ndarray | None = None,
+    sensitivity_method: str = "rss",
+    eps: float = 1e-6,
+) -> Array:
+    """CG-SENSE: iterative reconstruction with coil sensitivities, y = A x = F S x.
+
+    Solves ``(Aᴴ A + l2·I) x = Aᴴ y`` by conjugate gradient (Pruessmann et al.,
+    MRM 2001), where ``A`` is :class:`~unimri.operators.FourierOperator` for
+    Cartesian data or :class:`~unimri.operators.NUFFTOperator` for non-Cartesian
+    data, composed with :class:`~unimri.operators.SensitivityOperator`. The same
+    solver code handles both, because only ``A`` changes with the trajectory.
+
+    ``sensitivity`` (``(n_coils, *image_shape)``) is estimated automatically via
+    :func:`unimri.calibration.estimate_sensitivity` if not supplied.
+    """
+    from unimri.operators import FourierOperator, NUFFTOperator, SensitivityOperator, unchecked
+    from unimri.optimization import conjugate_gradient
+
+    image_shape = image_shape_of(data)
+
+    if sensitivity is None:
+        from unimri.calibration import estimate_sensitivity
+
+        sensitivity = estimate_sensitivity(data, method=sensitivity_method, eps=eps)
+
+    S = SensitivityOperator(sensitivity)
+    F: FourierOperator | NUFFTOperator
+    if data.is_cartesian:
+        spatial = tuple(a for a in ("kz", "ky", "kx") if a in data.kspace_axes)
+        F = FourierOperator(image_shape)
+        y = _as_coil_first(data, spatial)
+    else:
+        traj = data.trajectory
+        assert traj is not None
+        F = NUFFTOperator(traj, image_shape, eps=eps)
+        y = _as_coil_first(data, ("shot", "readout")).reshape(data.n_coils, -1)
+
+    encoding = unchecked(F @ S)
+    img = conjugate_gradient(encoding, y.astype(np.complex128), n_iter=n_iter, l2=l2)
+
+    data.provenance.record(
+        "reconstruct", params={"method": "cg", "n_iter": n_iter, "l2": l2}, backend="numpy"
+    )
+    return img
