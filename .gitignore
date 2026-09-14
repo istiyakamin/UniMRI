@@ -55,10 +55,12 @@ Thumbs.db
 *.nii.gz
 *.cfl
 *.cfl.hdr
-data/
-scratch/
+# Anchored to repo root: unimri's own src/unimri/data/ package must not match.
+/data/
+/scratch/
 
 # Output images/arrays written by running the examples from the repo root
 # (tracked images belong in assets/, not the root)
 /*.png
 /*.npy
+/coverage.xml
