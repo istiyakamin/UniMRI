@@ -6,6 +6,10 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.0.1a1] - 2026-09-14
+
+First alpha release.
+
 ### Added
 - Initial project scaffold: packaging, CI, documentation skeleton.
 - Design specification (`docs/architecture.md`, `docs/data-model.md`).
@@ -56,6 +60,10 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Fixed: `FourierOperator` previously used a unitary ("ortho") FFT convention
   inconsistent with `NUFFTOperator`/`ndft`'s unnormalized convention -- caught
   while wiring `reconstruct(method="cg")` to swap between them transparently.
+- Fixed: an unanchored `data/` pattern in `.gitignore` matched `src/unimri/data/`
+  (the `MRIData` data model) as well as the intended top-level scratch
+  directory, so it had never actually been committed -- every CI job and a
+  real wheel install failed on import. Anchored the pattern to the repo root.
 
 ### Not yet implemented
 - All vendor readers (`ismrmrd`, `twix`, `hdf5`) — interfaces only.
