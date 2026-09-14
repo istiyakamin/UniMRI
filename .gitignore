@@ -64,3 +64,6 @@ Thumbs.db
 /*.png
 /*.npy
 /coverage.xml
+
+# Claude Code session state (not repo content)
+/.claude/

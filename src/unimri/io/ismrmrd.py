@@ -37,6 +37,21 @@ _HDF5_MAGIC = b"\x89HDF\r\n\x1a\n"
 
 
 class ISMRMRDReader(Reader):
+    """Read a single Cartesian encoding space from an ISMRMRD file.
+
+    Wraps the reference ``ismrmrd`` package (``pip install "unimri[ismrmrd]"``).
+    Scope (Milestone 1, see ``docs/roadmap.md``): exactly one slice / average /
+    contrast / repetition / set / segment. Multi-dimensional acquisitions and
+    non-Cartesian ISMRMRD trajectories raise a clear
+    :class:`~unimri.exceptions.ReaderError` naming what isn't supported,
+    rather than silently mishandling the data -- see
+    ``docs/io-format-support.md`` for the full scope. Noise-measurement
+    acquisitions (``ACQ_IS_NOISE_MEASUREMENT``) are skipped; pre-whitening is
+    not yet applied. ISMRMRD's header has no standard nucleus field, so
+    :attr:`~unimri.data.AcquisitionInfo.nucleus` stays at its ``"1H"``
+    default -- set it manually for multinuclear files.
+    """
+
     format_name = "ISMRMRD"
     extensions = (".mrd", ".h5", ".ismrmrd")
 

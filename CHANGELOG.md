@@ -6,6 +6,19 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Documentation
+- `docs/index.md` rewritten: the status banner still said "pre-alpha (v0.0.0),
+  no reconstruction backends implemented" -- badly stale. Now accurate, plus
+  a real quickstart (ISMRMRD read+reconstruct, synthetic data, building
+  `MRIData` by hand) instead of only a "why" pitch.
+- `docs/reference/calibration.md` and `optimization.md` were bare
+  mkdocstrings stubs with no surrounding context; added the same kind of
+  intro prose + architecture cross-links the other reference pages have.
+- `docs/reference/io.md` now documents `ISMRMRDReader` itself, not just the
+  registry functions; added a class docstring to `ISMRMRDReader` so it
+  renders (module docstrings aren't picked up by a class-level
+  `::: unimri.io.ISMRMRDReader` directive).
+
 ## [0.1.0a1] - 2026-09-14
 
 Milestone 1: `unimri.read()` reads real data for the first time.
