@@ -2,8 +2,9 @@
 
 This package is in **pre-alpha**. The data model, operator algebra, and
 ``reconstruct(method="adjoint"|"cg")`` work today, validated on real 3-D
-radial data; vendor readers (``unimri.read``) are still stubs. See
-``docs/roadmap.md``.
+radial data; ``unimri.read`` reads Cartesian ISMRMRD files end-to-end.
+Other vendor formats (Siemens TWIX, GE, Philips) and non-Cartesian ISMRMRD
+are still stubs. See ``docs/roadmap.md``.
 """
 
 from __future__ import annotations
@@ -35,7 +36,7 @@ from unimri.operators import (
 
 # Single source of truth for the version. Hatchling reads this line
 # (`[tool.hatch.version]`), and CITATION.cff is kept in sync by a test.
-__version__ = "0.0.1a2"
+__version__ = "0.1.0a1"
 
 __all__ = [
     "__version__",

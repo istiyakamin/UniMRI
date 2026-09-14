@@ -1,8 +1,10 @@
 """UniMRI quickstart -- partly ASPIRATIONAL.
 
-This script shows the *intended* top-level API for a vendor `.dat`. The
-reconstruction half now works (see examples/04, examples/07); the reader half
-(`unimri.read` for Siemens TWIX) does not yet -- see docs/roadmap.md.
+This script shows the *intended* top-level API for a Siemens `.dat` file.
+The reconstruction half works today (see examples/04, examples/07); reading
+Cartesian *ISMRMRD* also works today (see examples/08_ismrmrd_cartesian.py).
+What's still missing is `unimri.read` for Siemens TWIX specifically -- see
+docs/roadmap.md, Milestone 2.
 """
 
 from __future__ import annotations

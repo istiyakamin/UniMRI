@@ -28,7 +28,7 @@ returns the first reader whose `can_read` accepts the file, else raises
 
 | Format | Extension | Reader | Status | Backend |
 | --- | --- | --- | --- | --- |
-| ISMRMRD | `.mrd`, `.h5` | `ISMRMRDReader` | interface only — **Milestone 1** | `ismrmrd` |
+| ISMRMRD | `.mrd`, `.h5` | `ISMRMRDReader` | ✅ **Cartesian** — see scope below | `ismrmrd` |
 | UniMRI HDF5 | `.h5`, `.hdf5` | `HDF5Reader` | interface only — **Milestone 1** | `h5py` |
 | Siemens TWIX | `.dat` | `TwixReader` | interface only — **Milestone 2** | `twixtools` |
 | GE | `.7`, ScanArchive | — | planned — Milestone 7 | TBD (Orchestra / `pfile`) |
@@ -37,6 +37,22 @@ returns the first reader whose `can_read` accepts the file, else raises
 
 "Interface only" means `can_read` is implemented (so detection works) but
 `read` raises `NotImplementedError` pointing at the roadmap.
+
+### `ISMRMRDReader` scope (as of `0.1.0a1`)
+
+Wraps the `ismrmrd` package. Handles a single **Cartesian** encoding space
+with exactly one slice / average / contrast / repetition / set / segment —
+validated end-to-end (write a real ISMRMRD file → read → `reconstruct` →
+match ground truth) in `tests/test_io_ismrmrd.py`. Noise-measurement
+acquisitions are skipped (no pre-whitening yet). Not yet supported, and
+rejected with a clear `ReaderError` rather than silently mishandled:
+
+- Non-Cartesian ISMRMRD trajectories (radial, spiral, ...) — Milestone 2/5.
+- Multi-slice / multi-average / multi-repetition / multi-set / multi-segment
+  acquisitions — tracked for a future milestone.
+- Nucleus label: ISMRMRD's header has no standard field for it, so
+  `AcquisitionInfo.nucleus` stays at its `"1H"` default; set it manually for
+  multinuclear files.
 
 ## Why ISMRMRD first
 

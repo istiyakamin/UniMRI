@@ -28,12 +28,14 @@ interface for MRI raw data across scanners, vendors, and acquisition strategies 
 Cartesian, radial, spiral, and other non-Cartesian trajectories — so that
 reconstruction algorithms can be written once and run on data from anywhere.
 
-> **Status: pre-alpha (v0.0.1a2).** The data model (`MRIData`), the operator
+> **Status: pre-alpha (v0.1.0a1).** The data model (`MRIData`), the operator
 > algebra, `FourierOperator`/`NUFFTOperator`/`SensitivityOperator`, and
 > `reconstruct(method="adjoint"|"cg")` — single-pass gridding and CG-SENSE, the
 > same code for Cartesian and non-Cartesian data — all work, validated on real
-> 3-D radial ²³Na data. The vendor readers (`unimri.read`) are still stubs. See
-> the [roadmap](https://istiyakamin.github.io/UniMRI/roadmap/).
+> 3-D radial ²³Na data. `unimri.read()` now reads real **Cartesian ISMRMRD**
+> files end-to-end (single slice/average/contrast/repetition/set/segment);
+> other vendor formats (Siemens TWIX, GE, Philips) and non-Cartesian ISMRMRD
+> are still stubs. See the [roadmap](https://istiyakamin.github.io/UniMRI/roadmap/).
 
 > **Name caveat:** `UniMRI` / `unimri` is a provisional working name. A full
 > PyPI / GitHub / trademark clearance is still pending before any public release
@@ -54,9 +56,15 @@ raw data into one representation, then reconstructs from that.
 ```python
 import unimri
 
-raw = unimri.read("measurement.dat")  # vendor-agnostic -- NOT YET (docs/roadmap.md, M2)
+raw = unimri.read("scan.mrd")  # ISMRMRD, Cartesian -- WORKS TODAY (see examples/08)
 image = unimri.reconstruct(raw, method="cg")  # trajectory-agnostic -- WORKS TODAY
 ```
+
+Other vendor formats (Siemens TWIX, GE, Philips) and non-Cartesian ISMRMRD
+are not read yet -- `unimri.read()` raises a clear error naming what's
+missing rather than guessing. See
+[I/O & format support](https://istiyakamin.github.io/UniMRI/io-format-support/)
+for exactly what's supported.
 
 ```python
 # advanced: reconstruction as an inverse problem -- WORKS TODAY (see examples/07_cg_sense.py)
@@ -74,8 +82,9 @@ A = unchecked(F @ SensitivityOperator(maps))
 image = conjugate_gradient(A, raw.kspace, n_iter=30)
 ```
 
-The reconstruction half works today (see `examples/`); `unimri.read` for vendor
-formats does not yet.
+Reading Cartesian ISMRMRD data and reconstructing it (both `"adjoint"` and
+`"cg"`) work today end-to-end (see `examples/`); other vendor formats and
+non-Cartesian ISMRMRD are not read yet.
 
 ## Installation (development)
 

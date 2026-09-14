@@ -40,6 +40,7 @@ dev = [
     "build>=1.2",
     "finufft>=2.2",
     "matplotlib>=3.7",
+    "ismrmrd>=1.14",
     "tomli>=2.0; python_version < '3.11'",
 ]
 docs = [

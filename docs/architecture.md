@@ -36,6 +36,11 @@ just works. Vendor parsing is delegated to existing libraries
 (`twixtools`, `ismrmrd`, `h5py`); UniMRI only owns the *mapping* onto the data
 model. See [I/O and formats](io-format-support.md).
 
+Implemented today: `ISMRMRDReader` for a single Cartesian encoding space
+(wraps the `ismrmrd` package), validated end-to-end by writing a real
+ISMRMRD file and reconstructing it. `HDF5Reader` and `TwixReader` are still
+interfaces only.
+
 ## Layer 2 — Data model
 
 `MRIData` is the pivot of the framework and the part most worth getting right.

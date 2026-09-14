@@ -17,8 +17,9 @@ python examples/01_data_model.py
 | `05_custom_reader.py` | Write and register your own `Reader` so `unimri.read()` handles a new format |
 | `06_multinuclear.py` | The gyromagnetic table; `AcquisitionInfo` for ²³Na vs ¹H |
 | `07_cg_sense.py` | CG-SENSE (`unimri.reconstruct(method="cg")`) via `FourierOperator`/`NUFFTOperator` composed with `SensitivityOperator`; same solver for Cartesian and non-Cartesian, beats single-pass gridding on undersampled radial |
+| `08_ismrmrd_cartesian.py` | `unimri.read()` on a **real Cartesian ISMRMRD file** (written with the reference `ismrmrd` package, not UniMRI) -> `reconstruct(method="adjoint"\|"cg")`, scored against known ground truth. Needs `pip install "unimri[ismrmrd]"`. |
 
-`test_examples.py` in the test suite executes `01`–`07` in CI, so they stay working.
+`test_examples.py` in the test suite executes `01`–`08` in CI, so they stay working.
 
 ## Needs local data
 
@@ -30,4 +31,4 @@ python examples/01_data_model.py
 
 | File | Shows |
 | --- | --- |
-| `99_aspirational_api.py` | The **intended** end-to-end API (`unimri.read` → `unimri.reconstruct`) for a vendor `.dat`. The reconstruction half works today; the reader half does not yet. Tracks the target in `docs/roadmap.md`. |
+| `99_aspirational_api.py` | The **intended** end-to-end API (`unimri.read` → `unimri.reconstruct`) for a Siemens `.dat`. The reconstruction half works today, and `unimri.read` works for Cartesian ISMRMRD (see `08`) — only `TwixReader` (`.dat`) is still missing. Tracks the target in `docs/roadmap.md`. |

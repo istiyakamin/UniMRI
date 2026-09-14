@@ -6,6 +6,26 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.0a1] - 2026-09-14
+
+Milestone 1: `unimri.read()` reads real data for the first time.
+
+### Added
+- `ISMRMRDReader.read` — real, wrapping the `ismrmrd` package. Scope: a
+  single Cartesian encoding space with exactly one slice / average /
+  contrast / repetition / set / segment. Non-Cartesian ISMRMRD trajectories
+  and multi-dimensional acquisitions raise a clear `ReaderError` naming what
+  isn't supported, rather than silently mishandling data.
+- `tests/test_io_ismrmrd.py` — end-to-end validation: write a real ISMRMRD
+  file with the `ismrmrd` package (not UniMRI, which has no writer), read it
+  back with `ISMRMRDReader`, reconstruct, and match known ground truth
+  exactly (`< 1e-6` scale-invariant NRMSE). Also covers metadata mapping,
+  noise-measurement skipping, and the two rejection paths above.
+- `examples/08_ismrmrd_cartesian.py` — the same round trip as a runnable
+  example, with both `"adjoint"` and `"cg"` reconstruction.
+- `ismrmrd` added to the `dev` extra so CI exercises the reader, not just
+  `importorskip`-skips it.
+
 ## [0.0.1a2] - 2026-09-14
 
 ### Fixed

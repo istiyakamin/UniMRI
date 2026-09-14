@@ -35,12 +35,20 @@ land.
   `synthetic_dataset(pattern)`.
 - ✅ `reconstruct(method="adjoint")` — centered inverse FFT (Cartesian) and
   density-compensated NUFFT gridding (non-Cartesian), RSS coil combine.
-- `ISMRMRDReader.read` — real, wrapping the `ismrmrd` package.
+- ✅ `FourierOperator` as a proper `LinearOperator` (also used by
+  `reconstruct(method="cg")`).
+- ✅ `ISMRMRDReader.read` — real, wrapping the `ismrmrd` package. Scope:
+  single Cartesian encoding space, one slice/average/contrast/repetition/
+  set/segment (see `docs/io-format-support.md`). Non-Cartesian ISMRMRD and
+  multi-dimensional acquisitions raise a clear `ReaderError`, not silently
+  mishandled data.
+- ✅ End-to-end test: write a real ISMRMRD file with the `ismrmrd` package,
+  read it with `ISMRMRDReader`, reconstruct, match ground truth
+  (`tests/test_io_ismrmrd.py`).
 - `HDF5Reader` + `MRIData.to_hdf5()` round-trip (test fixtures, caching).
-- `FourierOperator` as a proper `LinearOperator` (the current recon uses a bare
-  centered FFT inline).
-- End-to-end test: ISMRMRD file → image.
-- **Revisit the data model** based on what ISMRMRD actually carries.
+- **Revisit the data model** based on what ISMRMRD actually carries: so far
+  no changes were needed -- `MRIData`'s Cartesian axis/encoding shapes matched
+  ISMRMRD's `encodedSpace`/`reconSpace`/`encodingLimits` directly.
 
 ## Milestone 2 — Siemens TWIX → `0.1.x`
 
