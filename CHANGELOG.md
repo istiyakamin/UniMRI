@@ -6,6 +6,16 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.0.1a2] - 2026-09-14
+
+### Fixed
+- README images and doc links used repo-relative paths, which resolve on
+  GitHub but 404 on PyPI (the long_description page has no repo base path).
+  Images now point at raw.githubusercontent.com; doc links point at the
+  MkDocs site or the github.com blob view. No code changes; re-released
+  solely because PyPI freezes long_description per-version and 0.0.1a1's
+  was already broken.
+
 ## [0.0.1a1] - 2026-09-14
 
 First alpha release.

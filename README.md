@@ -10,16 +10,16 @@
   <a href="https://github.com/istiyakamin/UniMRI/actions/workflows/ci.yml"><img src="https://github.com/istiyakamin/UniMRI/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <img src="https://img.shields.io/badge/status-pre--alpha-orange.svg" alt="Status: pre-alpha">
   <img src="https://img.shields.io/badge/python-3.10%2B-blue.svg" alt="Python 3.10+">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a>
+  <a href="https://github.com/istiyakamin/UniMRI/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a>
   <a href="https://github.com/astral-sh/ruff"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" alt="Ruff"></a>
   <img src="https://img.shields.io/badge/types-typed-brightgreen.svg" alt="Typed">
   <a href="https://istiyakamin.github.io/UniMRI/"><img src="https://img.shields.io/badge/docs-mkdocs-blue.svg" alt="Docs"></a>
+  <a href="https://pypi.org/project/unimri/"><img src="https://img.shields.io/pypi/v/unimri.svg" alt="PyPI"></a>
 </p>
 
-<!-- Enable once the package is actually on PyPI (after the first `v0.0.1a1` tag publishes):
-  <a href="https://pypi.org/project/unimri/"><img src="https://img.shields.io/pypi/v/unimri.svg" alt="PyPI"></a>
-  <a href="https://pypi.org/project/unimri/"><img src="https://img.shields.io/pypi/dm/unimri.svg?label=PyPI%20downloads" alt="PyPI downloads"></a>
-  <a href="https://doi.org/PLACEHOLDER"><img src="https://img.shields.io/badge/DOI-PLACEHOLDER-blue.svg" alt="DOI"></a>
+<!-- Enable once these apply:
+  <a href="https://pypi.org/project/unimri/"><img src="https://img.shields.io/pypi/dm/unimri.svg?label=PyPI%20downloads" alt="PyPI downloads"></a>  (once there's real download volume)
+  <a href="https://doi.org/PLACEHOLDER"><img src="https://img.shields.io/badge/DOI-PLACEHOLDER-blue.svg" alt="DOI"></a>  (needs Zenodo integration)
   <a href="https://securityscorecards.dev/viewer/?uri=github.com/istiyakamin/UniMRI"><img src="https://api.securityscorecards.dev/projects/github.com/istiyakamin/UniMRI/badge" alt="OpenSSF Scorecard"></a>
 -->
 
@@ -28,7 +28,7 @@ interface for MRI raw data across scanners, vendors, and acquisition strategies 
 Cartesian, radial, spiral, and other non-Cartesian trajectories — so that
 reconstruction algorithms can be written once and run on data from anywhere.
 
-> **Status: pre-alpha (v0.0.1a1).** The data model (`MRIData`), the operator
+> **Status: pre-alpha (v0.0.1a2).** The data model (`MRIData`), the operator
 > algebra, `FourierOperator`/`NUFFTOperator`/`SensitivityOperator`, and
 > `reconstruct(method="adjoint"|"cg")` — single-pass gridding and CG-SENSE, the
 > same code for Cartesian and non-Cartesian data — all work, validated on real
