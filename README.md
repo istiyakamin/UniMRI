@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo.png" alt="UniMRI — one interface for MRI raw data" width="380">
+  <img src="https://raw.githubusercontent.com/istiyakamin/UniMRI/main/assets/logo.png" alt="UniMRI — one interface for MRI raw data" width="380">
 </p>
 
 <h1 align="center">UniMRI</h1>
@@ -33,7 +33,7 @@ reconstruction algorithms can be written once and run on data from anywhere.
 > `reconstruct(method="adjoint"|"cg")` — single-pass gridding and CG-SENSE, the
 > same code for Cartesian and non-Cartesian data — all work, validated on real
 > 3-D radial ²³Na data. The vendor readers (`unimri.read`) are still stubs. See
-> the [roadmap](docs/roadmap.md).
+> the [roadmap](https://istiyakamin.github.io/UniMRI/roadmap/).
 
 > **Name caveat:** `UniMRI` / `unimri` is a provisional working name. A full
 > PyPI / GitHub / trademark clearance is still pending before any public release
@@ -46,7 +46,7 @@ every reconstruction toolbox has its own data model. UniMRI normalizes vendor
 raw data into one representation, then reconstructs from that.
 
 <p align="center">
-  <img src="assets/idea.png" alt="UniMRI pipeline: raw data from any vendor (Siemens TWIX, GE P-file, Philips RAW, ISMRMRD, HDF5) flows through the I/O layer (format detection + reader registry), into the unified MRIData model (k-space, trajectory, encoding, coils, metadata, provenance), through the operator layer (reconstruction as an inverse problem, y = P F S x), through reconstruction (FFT, SENSE, GRAPPA, CG-SENSE, compressed sensing), to an MRI image — vendor- and trajectory-independent." width="560">
+  <img src="https://raw.githubusercontent.com/istiyakamin/UniMRI/main/assets/idea.png" alt="UniMRI pipeline: raw data from any vendor (Siemens TWIX, GE P-file, Philips RAW, ISMRMRD, HDF5) flows through the I/O layer (format detection + reader registry), into the unified MRIData model (k-space, trajectory, encoding, coils, metadata, provenance), through the operator layer (reconstruction as an inverse problem, y = P F S x), through reconstruction (FFT, SENSE, GRAPPA, CG-SENSE, compressed sensing), to an MRI image — vendor- and trajectory-independent." width="560">
 </p>
 
 ## Aspirational API
@@ -92,19 +92,19 @@ GPU and vendor-specific support are optional extras: `pip install -e ".[gpu]"`,
 
 ## Documentation
 
-- [Architecture](docs/architecture.md) — the layered design and the operator model
-- [Data model](docs/data-model.md) — `MRIData` schema and unit conventions
-- [I/O & format support](docs/io-format-support.md)
-- [Roadmap](docs/roadmap.md)
-- [Prior art](docs/prior-art.md) — how UniMRI relates to `mrpro`, `mri-nufft`,
+- [Architecture](https://istiyakamin.github.io/UniMRI/architecture/) — the layered design and the operator model
+- [Data model](https://istiyakamin.github.io/UniMRI/data-model/) — `MRIData` schema and unit conventions
+- [I/O & format support](https://istiyakamin.github.io/UniMRI/io-format-support/)
+- [Roadmap](https://istiyakamin.github.io/UniMRI/roadmap/)
+- [Prior art](https://istiyakamin.github.io/UniMRI/prior-art/) — how UniMRI relates to `mrpro`, `mri-nufft`,
   `sigpy`, BART, ISMRMRD/Gadgetron, and others
-- [Acknowledgments](docs/acknowledgments.md) — every library, standard, and
+- [Acknowledgments](https://istiyakamin.github.io/UniMRI/acknowledgments/) — every library, standard, and
   method UniMRI uses, with credit
 
 ## Contributing
 
 UniMRI is meant to grow as a community project. See
-[CONTRIBUTING.md](CONTRIBUTING.md) and the
+[CONTRIBUTING.md](https://github.com/istiyakamin/UniMRI/blob/main/CONTRIBUTING.md) and the
 [good first issues](https://github.com/istiyakamin/UniMRI/labels/good%20first%20issue).
 
 ## Acknowledgments
@@ -112,8 +112,8 @@ UniMRI is meant to grow as a community project. See
 UniMRI builds on the open-source scientific Python ecosystem — NumPy, SciPy,
 h5py, and (as it grows) ISMRMRD, MRI-NUFFT, SigPy, BART, twixtools, PyTorch, and
 others, plus published reconstruction methods credited to their originators. The
-full list with licenses is in [docs/acknowledgments.md](docs/acknowledgments.md).
+full list with licenses is in [docs/acknowledgments.md](https://istiyakamin.github.io/UniMRI/acknowledgments/).
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT — see [LICENSE](https://github.com/istiyakamin/UniMRI/blob/main/LICENSE).
