@@ -12,7 +12,7 @@ UniMRI uses [Semantic Versioning](https://semver.org). The version lives in
    - `CITATION.cff` → `version:` and `date-released:`
    - `CHANGELOG.md` → move items from `## [Unreleased]` into a new
      `## [X.Y.Z] - YYYY-MM-DD` section.
-3. `pip install -e ".[dev]" && pytest` — the metadata-consistency test must pass.
+3. `uv sync --extra dev && uv run pytest` — the metadata-consistency test must pass.
 4. Commit: `Release X.Y.Z`.
 5. Tag and push:
    ```bash

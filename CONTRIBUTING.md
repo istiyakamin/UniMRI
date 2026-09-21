@@ -19,21 +19,29 @@ code.
 
 ## Development setup
 
+UniMRI uses [uv](https://docs.astral.sh/uv/) for dependency management — it's
+fast and `uv.lock` pins the exact versions CI tests against, so "works on my
+machine" means the same thing as "works in CI":
+
 ```bash
-python -m venv .venv && source .venv/bin/activate
-pip install -e ".[dev]"
+uv sync --extra dev
 pre-commit install        # optional but recommended
 ```
+
+Don't have `uv`? `pip install -e ".[dev]"` into your own virtualenv still
+works identically (`uv.lock` is only consulted by `uv`) — you'll just resolve
+dependency versions yourself rather than matching the pinned lockfile.
 
 ## Before you push
 
 ```bash
-ruff check . && ruff format .
-mypy src
-pytest
+uv run ruff check . && uv run ruff format .
+uv run mypy src
+uv run pytest
 ```
 
-CI runs the same on Python 3.10–3.13.
+(drop `uv run` if you're using your own pip-installed environment). CI runs
+the same on Python 3.10–3.13.
 
 ## Design principles
 

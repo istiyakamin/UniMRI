@@ -25,50 +25,47 @@ jobs:
             python-version: "3.12"
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: astral-sh/setup-uv@v10.1.0
         with:
           python-version: ${{ matrix.python-version }}
-          cache: pip
+          enable-cache: true
       - name: Install
-        run: |
-          python -m pip install --upgrade pip
-          pip install -e ".[dev]"
+        run: uv sync --extra dev
       - name: Test
-        run: pytest --cov --cov-report=xml
+        run: uv run pytest --cov --cov-report=xml
 
   lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: astral-sh/setup-uv@v10.1.0
         with:
           python-version: "3.12"
-          cache: pip
-      - run: pip install -e ".[dev]"
+          enable-cache: true
+      - run: uv sync --extra dev
       - name: Ruff
         run: |
-          ruff check .
-          ruff format --check .
+          uv run ruff check .
+          uv run ruff format --check .
       - name: mypy (non-blocking)
-        run: mypy src
+        run: uv run mypy src
         continue-on-error: true
 
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: astral-sh/setup-uv@v10.1.0
         with:
           python-version: "3.12"
       - name: Build sdist + wheel and check
         run: |
-          python -m pip install --upgrade pip build twine
-          python -m build
-          twine check dist/*
+          uv build
+          uvx twine check dist/*
       - name: Install the built wheel and import it
         run: |
-          python -m venv /tmp/verify
-          /tmp/verify/bin/pip install dist/*.whl
+          uv venv /tmp/verify
+          uv pip install --python /tmp/verify/bin/python dist/*.whl
           /tmp/verify/bin/python -c "import unimri; print(unimri.__version__)"
       - uses: actions/upload-artifact@v4
         with:

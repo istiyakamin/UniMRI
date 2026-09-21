@@ -86,18 +86,29 @@ Reading Cartesian ISMRMRD data and reconstructing it (both `"adjoint"` and
 `"cg"`) work today end-to-end (see `examples/`); other vendor formats and
 non-Cartesian ISMRMRD are not read yet.
 
-## Installation (development)
+## Installation
+
+```bash
+pip install unimri
+```
+
+The base install is just NumPy, SciPy, and h5py. Everything else — NUFFT
+(`nufft`), ISMRMRD (`ismrmrd`), plotting (`viz`), GPU (`gpu`), PyTorch
+(`torch`) — is an optional extra: `pip install "unimri[nufft,ismrmrd]"`.
+
+## Development
 
 ```bash
 git clone https://github.com/istiyakamin/UniMRI
 cd UniMRI
-python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
-pip install -e ".[dev]"
-pytest
+uv sync --extra dev
+uv run pytest
 ```
 
-GPU and vendor-specific support are optional extras: `pip install -e ".[gpu]"`,
-`".[torch]"`, `".[ismrmrd]"`.
+Uses [uv](https://docs.astral.sh/uv/) with a committed `uv.lock`, so the
+dependency versions match what CI tests against. No `uv`? `pip install -e
+".[dev]" && pytest` in your own virtualenv works the same, just without the
+pinned lockfile.
 
 ## Documentation
 

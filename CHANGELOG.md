@@ -6,6 +6,21 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+- Dev/CI tooling switched from `pip` to [uv](https://docs.astral.sh/uv/):
+  added `uv.lock` (pins exact dependency versions CI tests against) and
+  `.python-version` (defaults local `uv run`/`uv sync` to 3.12, matching the
+  lint/build/docs CI jobs). `ci.yml`, `docs.yml`, and `release.yml` now use
+  `astral-sh/setup-uv` + `uv sync`/`uv run`/`uv build` instead of
+  `actions/setup-python` + `pip install`; `dependabot.yml`'s Python entry
+  switched from the `pip` to the `uv` ecosystem so it updates `uv.lock`
+  directly. The actual publish step (PyPI Trusted Publishing via
+  `pypa/gh-action-pypi-publish`) is unchanged.
+  **Not a breaking change for users**: the build backend is still hatchling,
+  what `pip install unimri` does is completely unaffected, and
+  `pip install -e ".[dev]"` still works for contributors without `uv` (just
+  without the pinned lockfile).
+
 ### Documentation
 - `docs/index.md` rewritten: the status banner still said "pre-alpha (v0.0.0),
   no reconstruction backends implemented" -- badly stale. Now accurate, plus

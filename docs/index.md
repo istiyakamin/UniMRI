@@ -51,14 +51,19 @@ optional extra, so you only pull in what you actually use:
 | `gpu` | CuPy | CUDA array backend (planned) |
 
 Combine what you need, e.g. `pip install "unimri[nufft,viz]"`. For
-development (running the test suite, linting, building docs):
+development (running the test suite, linting, building docs), UniMRI uses
+[uv](https://docs.astral.sh/uv/) with a committed `uv.lock` so contributors
+and CI resolve the exact same dependency versions:
 
 ```bash
 git clone https://github.com/istiyakamin/UniMRI
 cd UniMRI
-pip install -e ".[dev]"
-pytest
+uv sync --extra dev
+uv run pytest
 ```
+
+No `uv`? `pip install -e ".[dev]" && pytest` in your own virtualenv works
+the same, just without the pinned lockfile.
 
 ## Quickstart
 
